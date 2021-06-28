@@ -41,7 +41,6 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-<<<<<<< HEAD
     //timer
 
     const deadline = new Date('2021-06-30');
@@ -52,21 +51,6 @@ window.addEventListener('DOMContentLoaded', () => {
             hours = Math.floor((t / (1000 * 60 * 60) % 24)),
             minutes = Math.floor((t / 1000 / 60) % 60),
             seconds = Math.floor((t / 1000) % 60);
-=======
-    hideTabContent();
-    showTabContent();
-
-    // Timer
-
-    const deadline = '2021-06-28';
-
-    function getTimeRemaining(endtime) {
-        const t = Date.parse(endtime) - Date.parse(new Date()),
-            days = Math.floor( (t/(1000*60*60*24)) ),
-            seconds = Math.floor( (t/1000) % 60 ),
-            minutes = Math.floor( (t/1000/60) % 60 ),
-            hours = Math.floor( (t/(1000*60*60) % 24) );
->>>>>>> 88ad0bc381d7d0f9e0449e81dc328e166fb3cb9c
 
         return {
             'total': t,
@@ -77,25 +61,15 @@ window.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-<<<<<<< HEAD
     function getZero(num) {
         if (num >= 0 && num < 10) {
             return `0${num}`;
-=======
-    function getZero(num){
-        if (num >= 0 && num < 10) { 
-            return '0' + num;
->>>>>>> 88ad0bc381d7d0f9e0449e81dc328e166fb3cb9c
         } else {
             return num;
         }
     }
 
     function setClock(selector, endtime) {
-<<<<<<< HEAD
-=======
-
->>>>>>> 88ad0bc381d7d0f9e0449e81dc328e166fb3cb9c
         const timer = document.querySelector(selector),
             days = timer.querySelector("#days"),
             hours = timer.querySelector('#hours'),
@@ -104,14 +78,8 @@ window.addEventListener('DOMContentLoaded', () => {
             timeInterval = setInterval(updateClock, 1000);
 
         updateClock();
-<<<<<<< HEAD
         function updateClock() {
             const t = getTimerReamaining(endtime);
-=======
-
-        function updateClock() {
-            const t = getTimeRemaining(endtime);
->>>>>>> 88ad0bc381d7d0f9e0449e81dc328e166fb3cb9c
 
             days.innerHTML = getZero(t.days);
             hours.innerHTML = getZero(t.hours);
@@ -125,7 +93,6 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     setClock('.timer', deadline);
-<<<<<<< HEAD
 
     // modal 
 
@@ -133,19 +100,23 @@ window.addEventListener('DOMContentLoaded', () => {
         modal = document.querySelector('.modal'),
         btnClose = document.querySelector('[data-close]');
 
-    modalTrigger.forEach(event => {
-        event.addEventListener('click', () => {
-            modal.classList.add('show');
-            modal.classList.remove('hide');
-            document.body.style.overflow = 'hidden';
-        });
-    });
-
+   
     function closeModal() {
         modal.classList.remove('show');
         modal.classList.add('hide');
         document.body.style.overflow = '';
     }
+
+    function openModal(){
+        modal.classList.add('show');
+        modal.classList.remove('hide');
+        document.body.style.overflow = 'hidden';
+        clearInterval(modalTimerId);
+    }
+
+    modalTrigger.forEach(event => {
+        event.addEventListener('click', openModal);
+    });
 
     btnClose.addEventListener('click', closeModal);
 
@@ -160,6 +131,16 @@ window.addEventListener('DOMContentLoaded', () => {
             closeModal();
         }
     });
-=======
->>>>>>> 88ad0bc381d7d0f9e0449e81dc328e166fb3cb9c
+
+    function showModalByScroll(){
+        if(window.pageYOffset + document.documentElement.clientHeight >= document.
+            documentElement.scrollHeight){
+            openModal();
+            window.removeEventListener('scroll', showModalByScroll);
+        }
+    }
+
+    window.addEventListener('scroll', showModalByScroll);
+
+    const modalTimerId = setTimeout(openModal, 2000);
 });
