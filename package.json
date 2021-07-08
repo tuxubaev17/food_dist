@@ -1,0 +1,25 @@
+{
+  "name": "localhost",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "xmlhttprequest": "^1.8.0"
+  },
+  "devDependencies": {
+    "json-server": "^0.16.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tuxubaev17/food_dist.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tuxubaev17/food_dist/issues"
+  },
+  "homepage": "https://github.com/tuxubaev17/food_dist#readme"
+}
