@@ -219,11 +219,19 @@ window.addEventListener('DOMContentLoaded', () => {
                 margin: 0 auto;
             `;
             form.insertAdjacentElement('afterend', statusMessage);
+<<<<<<< HEAD
 
             const formData = new FormData(form);
 
             const object = {};
             formData.forEach(function (value, key) {
+=======
+        
+            const formData = new FormData(form);
+
+            const object = {};
+            formData.forEach(function(value, key){
+>>>>>>> a4c469c5435a10669e68be244773c11c1ec40626
                 object[key] = value;
             });
 
@@ -232,6 +240,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     'Content-type': 'application/json; charset=utf-8'
                 },
+<<<<<<< HEAD
                 body: JSON.stringify(object)
             }).then(data => data.text())
                 .then(data => {
@@ -243,6 +252,19 @@ window.addEventListener('DOMContentLoaded', () => {
                 }).finally(() => {
                     form.reset();
                 });
+=======
+                body: JSON.stringify(object) 
+            }).then(data => data.text())
+            .then(data => {
+                console.log(data);
+                showThanksModal(message.success);
+                statusMessage.remove();
+            }).catch(() => {
+                showThanksModal(message.failure);
+            }).finally( () => {
+                form.reset();
+            });
+>>>>>>> a4c469c5435a10669e68be244773c11c1ec40626
 
         });
     }
@@ -269,11 +291,14 @@ window.addEventListener('DOMContentLoaded', () => {
             closeModal();
         }, 4000);
     }
+<<<<<<< HEAD
 
     fetch('http://localhost:3000/menu')
     .then(data => data.json())
     .then(res => console.log(res));
 
+=======
+>>>>>>> a4c469c5435a10669e68be244773c11c1ec40626
 });
 
 
