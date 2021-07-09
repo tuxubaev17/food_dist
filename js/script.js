@@ -184,19 +184,19 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    const getResourse = async(url) => {
+    const getResourse = async (url) => {
         const res = await fetch(url);
-        if (!res.ok){
+        if (!res.ok) {
             throw new Error(`Could not fetch ${url}, status:${res.status}`);
-        } 
+        }
         return await res.json();
     };
 
     getResourse('http://localhost:3000/menu')
-    .then(data => data.forEach(({img, altimg, title, descr, price}) => {
-        new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
-    }));
-   
+        .then(data => data.forEach(({ img, altimg, title, descr, price }) => {
+            new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
+        }));
+
 
 
     const forms = document.querySelectorAll('form');
@@ -210,7 +210,7 @@ window.addEventListener('DOMContentLoaded', () => {
         baindPostData(item);
     });
 
-    const postData = async(url, data) => {
+    const postData = async (url, data) => {
         const res = await fetch(url, {
             method: 'POST',
             headers: {
@@ -273,12 +273,57 @@ window.addEventListener('DOMContentLoaded', () => {
         }, 4000);
     }
 
-    fetch('http://localhost:3000/menu')
-    .then(data => data.json())
-    .then(res => console.log(res));
+    // slider 
 
+    const slides = document.querySelectorAll('.offer__slide'),
+        prev = document.querySelector('.offer__slider-prev'),
+        next = document.querySelector('.offer__slider-next'),
+        current = document.querySelector('#current'),
+        total = document.querySelector('#total');
+    let slideIndex = 1;
+    
+    showSlides(slideIndex);
+
+    function showSlides(n) {
+        
+        if (slides.length < 10){
+            total.textContent = `0${slides.length}`;
+        }else {
+            total.textContent = slides.length;
+        }
+
+        if (n > slides.length){
+            slideIndex = 1;
+        }
+        if (n < 1){
+            slideIndex = slides.length;
+        }
+
+        slides.forEach(item => {
+            item.style.display = 'none';
+        });
+
+        slides[slideIndex-1].style.display = 'block';
+
+        if (slides.length < 10){
+            current.textContent = `0${slideIndex}`;
+        }else {
+            current.textContent = slideIndex;
+        }
+    }
+
+    function plusSlides(n){
+        showSlides(slideIndex += n);
+    }
+
+    prev.addEventListener('click', function() {
+        plusSlides(-1);
+    });
+
+    next.addEventListener('click', function() {
+        plusSlides(1);
+    });
 });
-
 
 
 
