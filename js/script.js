@@ -1,9 +1,6 @@
-'use strict';
+window.addEventListener('DOMContentLoaded', function () {
 
-
-window.addEventListener('DOMContentLoaded', () => {
-
-    //tabs
+    // Tabs
 
     let tabs = document.querySelectorAll('.tabheader__item'),
         tabsContent = document.querySelectorAll('.tabcontent'),
@@ -42,16 +39,16 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    //timer
+    // Timer
 
-    const deadline = new Date('2021-06-30');
+    const deadline = '2020-05-11';
 
-    function getTimerReamaining(endtime) {
+    function getTimeRemaining(endtime) {
         const t = Date.parse(endtime) - Date.parse(new Date()),
-            days = Math.floor(t / (1000 * 60 * 60 * 24)),
-            hours = Math.floor((t / (1000 * 60 * 60) % 24)),
+            days = Math.floor((t / (1000 * 60 * 60 * 24))),
+            seconds = Math.floor((t / 1000) % 60),
             minutes = Math.floor((t / 1000 / 60) % 60),
-            seconds = Math.floor((t / 1000) % 60);
+            hours = Math.floor((t / (1000 * 60 * 60) % 24));
 
         return {
             'total': t,
@@ -64,13 +61,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
     function getZero(num) {
         if (num >= 0 && num < 10) {
-            return `0${num}`;
+            return '0' + num;
         } else {
             return num;
         }
     }
 
     function setClock(selector, endtime) {
+
         const timer = document.querySelector(selector),
             days = timer.querySelector("#days"),
             hours = timer.querySelector('#hours'),
@@ -79,8 +77,9 @@ window.addEventListener('DOMContentLoaded', () => {
             timeInterval = setInterval(updateClock, 1000);
 
         updateClock();
+
         function updateClock() {
-            const t = getTimerReamaining(endtime);
+            const t = getTimeRemaining(endtime);
 
             days.innerHTML = getZero(t.days);
             hours.innerHTML = getZero(t.hours);
@@ -95,18 +94,18 @@ window.addEventListener('DOMContentLoaded', () => {
 
     setClock('.timer', deadline);
 
-    // modal 
+    // Modal
 
     const modalTrigger = document.querySelectorAll('[data-modal]'),
         modal = document.querySelector('.modal');
 
-    modalTrigger.forEach(event => {
-        event.addEventListener('click', openModal);
+    modalTrigger.forEach(btn => {
+        btn.addEventListener('click', openModal);
     });
 
     function closeModal() {
-        modal.classList.remove('show');
         modal.classList.add('hide');
+        modal.classList.remove('show');
         document.body.style.overflow = '';
     }
 
@@ -117,7 +116,6 @@ window.addEventListener('DOMContentLoaded', () => {
         clearInterval(modalTimerId);
     }
 
-
     modal.addEventListener('click', (e) => {
         if (e.target === modal || e.target.getAttribute('data-close') == "") {
             closeModal();
@@ -125,79 +123,73 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener('keydown', (e) => {
-        if (e.code === 'Escape' && modal.classList.contains('show')) {
+        if (e.code === "Escape" && modal.classList.contains('show')) {
             closeModal();
         }
     });
 
-    const modalTimerId = setTimeout(openModal, 50000);
+    const modalTimerId = setTimeout(openModal, 300000);
+    // Изменил значение, чтобы не отвлекало
 
     function showModalByScroll() {
-        if (window.pageYOffset + document.documentElement.clientHeight >= document.
-            documentElement.scrollHeight) {
+        if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
             openModal();
             window.removeEventListener('scroll', showModalByScroll);
         }
     }
-
     window.addEventListener('scroll', showModalByScroll);
 
-
-    // Используем классы для карточек 
+    // Используем классы для создание карточек меню
 
     class MenuCard {
-        constructor(src, alt, title, description, price, parentSelector, ...classes) {
+        constructor(src, alt, title, descr, price, parentSelector, ...classes) {
             this.src = src;
             this.alt = alt;
             this.title = title;
-            this.description = description;
+            this.descr = descr;
             this.price = price;
-            this.parent = document.querySelector(parentSelector);
             this.classes = classes;
+            this.parent = document.querySelector(parentSelector);
             this.transfer = 27;
             this.changeToUAH();
         }
 
         changeToUAH() {
-            this.price *= this.transfer;
+            this.price = this.price * this.transfer;
         }
 
         render() {
             const element = document.createElement('div');
+
             if (this.classes.length === 0) {
-                this.element = 'menu__item';
-                element.classList.add(this.element);
+                this.classes = "menu__item";
+                element.classList.add(this.classes);
             } else {
                 this.classes.forEach(className => element.classList.add(className));
             }
+
             element.innerHTML = `
-                    <img src= ${this.src} alt=${this.alt}>
-                    <h3 class="menu__item-subtitle">${this.title}</h3>
-                    <div class="menu__item-descr">${this.description}</div>
-                    <div class="menu__item-divider"></div>
-                    <div class="menu__item-price">
-                        <div class="menu__item-cost">Цена:</div>
-                        <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
-                    </div>
+                <img src=${this.src} alt=${this.alt}>
+                <h3 class="menu__item-subtitle">${this.title}</h3>
+                <div class="menu__item-descr">${this.descr}</div>
+                <div class="menu__item-divider"></div>
+                <div class="menu__item-price">
+                    <div class="menu__item-cost">Цена:</div>
+                    <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+                </div>
             `;
             this.parent.append(element);
         }
     }
 
-    const getResourse = async (url) => {
-        const res = await fetch(url);
-        if (!res.ok) {
-            throw new Error(`Could not fetch ${url}, status:${res.status}`);
-        }
-        return await res.json();
-    };
+    getResource('http://localhost:3000/menu')
+        .then(data => {
+            data.forEach(({ img, altimg, title, descr, price }) => {
+                new MenuCard(img, altimg, title, descr, price, ".menu .container").render();
+            });
+        });
 
-    getResourse('http://localhost:3000/menu')
-        .then(data => data.forEach(({ img, altimg, title, descr, price }) => {
-            new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
-        }));
-
-
+    // Forms
 
     const forms = document.querySelectorAll('form');
     const message = {
@@ -207,20 +199,32 @@ window.addEventListener('DOMContentLoaded', () => {
     };
 
     forms.forEach(item => {
-        baindPostData(item);
+        bindPostData(item);
     });
 
     const postData = async (url, data) => {
-        const res = await fetch(url, {
-            method: 'POST',
+        let res = await fetch(url, {
+            method: "POST",
             headers: {
-                'Content-type': 'application/json; charset=utf-8'
+                'Content-Type': 'application/json'
             },
             body: data
         });
+
         return await res.json();
     };
-    function baindPostData(form) {
+
+    async function getResource(url) {
+        let res = await fetch(url);
+
+        if (!res.ok) {
+            throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+        }
+
+        return await res.json();
+    }
+
+    function bindPostData(form) {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
@@ -246,7 +250,6 @@ window.addEventListener('DOMContentLoaded', () => {
                 }).finally(() => {
                     form.reset();
                 });
-
         });
     }
 
@@ -273,22 +276,37 @@ window.addEventListener('DOMContentLoaded', () => {
         }, 4000);
     }
 
-    // slider 
+    // Slider
+
+    let offset = 0;
+    let slideIndex = 1;
 
     const slides = document.querySelectorAll('.offer__slide'),
+        slider = document.querySelector('.offer__slider'),
         prev = document.querySelector('.offer__slider-prev'),
         next = document.querySelector('.offer__slider-next'),
-        current = document.querySelector('#current'),
         total = document.querySelector('#total'),
-        slideWraper = document.querySelector('.offer__slider-wrapper'),
-        slidesField = document.querySelector('.offer__slider-inner'),
-        width = window.getComputedStyle(slideWraper).width;
-    let slideIndex = 1;
-    let offset = 0;
+        current = document.querySelector('#current'),
+        slidesWrapper = document.querySelector('.offer__slider-wrapper'),
+        width = window.getComputedStyle(slidesWrapper).width,
+        slidesField = document.querySelector('.offer__slider-inner');
+
+    function dotsOpacity(dotArr){
+        dotArr.forEach(dot => dot.style.opacity = '.5');
+        dotArr[slideIndex - 1].style.opacity = 1;
+    }
+
+    function currentIndex(slideArr, index){
+        if (slideArr.length < 10) {
+            current.textContent = `0${index}`;
+        } else {
+            current.textContent = index;
+        }
+    }
 
     if (slides.length < 10) {
         total.textContent = `0${slides.length}`;
-        current.textContent = `0${slides.length}`;
+        current.textContent = `0${slideIndex}`;
     } else {
         total.textContent = slides.length;
         current.textContent = slideIndex;
@@ -298,11 +316,56 @@ window.addEventListener('DOMContentLoaded', () => {
     slidesField.style.display = 'flex';
     slidesField.style.transition = '0.5s all';
 
-    slideWraper.style.overflow = 'hidden';
+    slidesWrapper.style.overflow = 'hidden';
 
-    slides.forEach((slides) => {
-        slides.style.width = width;
+    slides.forEach(slide => {
+        slide.style.width = width;
     });
+
+    slider.style.position = 'relative';
+    const indicator = document.createElement('ol'),
+        dots = [];
+    indicator.classList.add('carousel-indicators');
+    indicator.style.cssText = `
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 15;
+        display: flex;
+        justify-content: center;
+        margin-right: 15%;
+        margin-left: 15%;
+        list-style: none;
+
+    `;
+    slider.append(indicator);
+
+    for (let i = 0; i < slides.length; i++) {
+        const dot = document.createElement('li');
+        dot.setAttribute('data-slide-to', i + 1);
+        dot.style.cssText = `
+            box-sizing: content-box;
+            flex: 0 1 auto;
+            width: 30px;
+            height: 6px;
+            margin-right: 3px;
+            margin-left: 3px;
+            cursor: pointer;
+            background-color: #fff;
+            background-clip: padding-box;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            opacity: .5;
+            transition: opacity .6s ease;
+        `;
+        if (i == 0) {
+            dot.style.opacity = 1;
+        }
+        indicator.append(dot);
+        dots.push(dot);
+
+    }
 
     next.addEventListener('click', () => {
         if (offset == (+width.slice(0, width.length - 2) * (slides.length - 1))) {
@@ -319,11 +382,8 @@ window.addEventListener('DOMContentLoaded', () => {
             slideIndex++;
         }
 
-        if (slides.length < 10) {
-            current.textContent = `0${slideIndex}`;
-        } else {
-            current.textContent = slideIndex;
-        }
+        currentIndex(slides, slideIndex);
+        dotsOpacity(dots);
     });
 
     prev.addEventListener('click', () => {
@@ -341,58 +401,20 @@ window.addEventListener('DOMContentLoaded', () => {
             slideIndex--;
         }
 
-        if (slides.length < 10) {
-            current.textContent = `0${slideIndex}`;
-        } else {
-            current.textContent = slideIndex;
-        }
+        currentIndex(slides, slideIndex);
+        dotsOpacity(dots);
     });
 
-    // showSlides(slideIndex);
+    dots.forEach(dot => {
+        dot.addEventListener('click', (e) => {
+            const slideTo = e.target.getAttribute('data-slide-to');
+            slideIndex = slideTo;
+            offset = +width.slice(0, width.length - 2) * (slideTo - 1)
 
-    // function showSlides(n) {
+            slidesField.style.transform = `translateX(-${offset}px)`;
 
-    // if (slides.length < 10) {
-    //     total.textContent = `0${slides.length}`;
-    // } else {
-    //     total.textContent = slides.length;
-    // }
-
-    //     if (n > slides.length) {
-    //         slideIndex = 1;
-    //     }
-
-    //     if (n < 1) {
-    //         slideIndex = slides.length;
-    //     }
-
-    //     slides.forEach(item => {
-    //         item.style.display = 'none';
-    //     });
-
-    //     slides[slideIndex - 1].style.display = 'block';
-
-    //     if (slides.length < 10) {
-    //         current.textContent = `0${slideIndex}`;
-    //     } else {
-    //         current.textContent = slideIndex;
-    //     }
-    // }
-
-    // function plusSlides(n) {
-    //     showSlides(slideIndex += n);
-    // }
-
-    // prev.addEventListener('click', function () {
-    //     plusSlides(-1);
-    // });
-
-    // next.addEventListener('click', function () {
-    //     plusSlides(1);
-    // });
-
-
+            currentIndex(slides, slideIndex);
+            dotsOpacity(dots);
+        });
+    });
 });
-
-
-
