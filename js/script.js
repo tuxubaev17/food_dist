@@ -1,9 +1,12 @@
-import  tabs from './modules/tabs';
-import  modal from './modules/modal';
-import  timer from './modules/timer';
-import  forms from './modules/forms';
-import  cards from './modules/cards';
-import  slider from './modules/slider';
+require("es6-promise").polyfill();
+
+import 'polyfill-nodelist-foreach';
+import tabs from './modules/tabs';
+import modal from './modules/modal';
+import timer from './modules/timer';
+import forms from './modules/forms';
+import cards from './modules/cards';
+import slider from './modules/slider';
 import calc from './modules/calc';
 import openModal from './modules/modal';
 
@@ -27,5 +30,5 @@ window.addEventListener('DOMContentLoaded', function () {
         field: '.offer__slider-inner'
     });
     calc();
-    
+
 });
